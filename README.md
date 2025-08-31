@@ -33,7 +33,7 @@ graph TD
     Fetch --> Parse[JSON Parser]
     Parse --> DB[(SQLite Database)]
     DB --> Score[Charity Scoring Engine]
-    Score --> Model[ML Engine (DL4J)]
+    Score --> Model["ML Engine (DL4J)"]
     Score --> Explain[Explanation Generator]
     Score --> Audit[Bias Auditor]
     Explain --> GUI
@@ -48,10 +48,11 @@ flowchart LR
     C --> D[(Database)]
     D --> E[Scoring Engine]
     E --> F[Recommendation Engine]
-    F --> G[Explanations + Bias Audit]
+    F --> G["Explanations + Bias Audit"]
     G --> H[JavaFX Dashboard]
     H --> I[User Feedback Loop]
     I --> E
+
 ```
 
 ## Project Structure
