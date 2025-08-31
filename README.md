@@ -58,42 +58,67 @@ flowchart LR
 ## Project Structure
 /algorithmic-philanthropy-advisor
 ├── src/main/java/com/apa/
+
 │   ├── MainApp.java         # Entry point
+
 │   ├── gui/                 # JavaFX views & controllers
+
 │   ├── model/               # Core data models
+
 │   ├── data/                # Fetchers, parsers
+
 │   ├── engine/              # Scoring, explanations
+
 │   ├── audit/               # Bias auditing
+
 │   ├── ml/                  # ML integration
+
 │   └── storage/             # Database layer
+
 ├── resources/               # FXML, configs, sample data
+
 ├── docs/                    # Documentation & diagrams
+
 └── README.md
 
 ## Tech Stack
 
 Java 17+
+
 JavaFX (GUI)
+
 SQLite + JDBC (Database)
+
 Jackson / Gson (JSON Parsing)
+
 Deeplearning4j (ML Integration)
+
 ChartsFX / XChart (Visualisation)
+
 Maven / Gradle (Build)
 
 ## Development Roadmap
 
 Week 1 – Research datasets, skeleton project setup
+
 Week 2-3 – Data fetcher, storage, scoring engine
+
 Week 4 – GUI development & dashboards
+
 Week 5 – Integration & testing
+
 Week 6 – ML integration, optimisation, documentation
 
 ## Contributors
 
 ML Developer (Mukti Shree Jain) – Recommendation Engine, ML
+
 Backend (Ayush Aryan) – Data Fetcher, Database
+
 Frontend (Vivek Kumar Prusty) – GUI, Dashboards
+
 Documentation/Testing (Ritvik Verma) – Setup, Docs, Q/A
+
 
 ## Ethical Principles
 
