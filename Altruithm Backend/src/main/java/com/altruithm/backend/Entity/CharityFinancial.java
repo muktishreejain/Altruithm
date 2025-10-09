@@ -2,7 +2,6 @@ package com.altruithm.backend.Entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "charity_financial")
@@ -11,9 +10,12 @@ public class CharityFinancial {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
+    @Column(name = "ascore")
     private Double ascore;
+
+    @Column(name = "category")
     private String category;
 
     @Column(name = "tot_exp")
@@ -40,6 +42,7 @@ public class CharityFinancial {
     @Column(name = "fund_exp")
     private Double fundExpense;
 
+    @Column(name = "fscore")
     private Double fscore;
 
     @Column(name = "NAME", length = 500)
@@ -48,10 +51,13 @@ public class CharityFinancial {
     @Column(name = "tot_rev")
     private Double totalRevenue;
 
+    @Column(name = "subcategory")
     private String subcategory;
+
+    @Column(name = "score")
     private Double score;
 
-    @Column(length = 50)
+    @Column(name = "size", length = 50)
     private String size;
 
     @Column(name = "EIN")
@@ -79,7 +85,7 @@ public class CharityFinancial {
     private Double assetAmount;
 
     @Column(name = "ACCT_PD")
-    private Long accountPeriod;
+    private Long accountingPeriod;
 
     @Column(name = "PF_FILING_REQ_CD")
     private Integer pfFilingReqCode;
@@ -104,12 +110,4 @@ public class CharityFinancial {
 
     @Column(name = "CLASSIFICATION")
     private Double classification;
-
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
 }

@@ -2,7 +2,6 @@ package com.altruithm.backend.Entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "charity_basic")
@@ -11,16 +10,19 @@ public class CharityBasic {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
+    @Column(name = "ascore")
     private Double ascore;
+
+    @Column(name = "category")
     private String category;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @Column(length = 20)
-    private String ein;
+    @Column(name = "ein", insertable = false, updatable = false)
+    private String einLowercase;
 
     @Column(name = "tot_exp")
     private Double totalExpenses;
@@ -28,6 +30,7 @@ public class CharityBasic {
     @Column(name = "fund_eff")
     private Double fundEfficiency;
 
+    @Column(name = "fscore")
     private Double fscore;
 
     @Column(name = "NAME", length = 500)
@@ -36,16 +39,17 @@ public class CharityBasic {
     @Column(name = "tot_rev")
     private Double totalRevenue;
 
+    @Column(name = "score")
     private Double score;
 
-    @Column(length = 10)
-    private String state;
+    @Column(name = "state", length = 10, insertable = false, updatable = false)
+    private String stateLowercase;
 
-    @Column(length = 50)
+    @Column(name = "size", length = 50)
     private String size;
 
     @Column(name = "EIN")
-    private Long einNumber;
+    private Long einUppercase;
 
     @Column(name = "STATE", length = 10)
     private String stateCode;
@@ -70,12 +74,4 @@ public class CharityBasic {
 
     @Column(name = "REVENUE_AMT")
     private Double revenueAmount;
-
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
 }
