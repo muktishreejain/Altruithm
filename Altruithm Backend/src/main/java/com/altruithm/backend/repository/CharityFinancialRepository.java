@@ -1,6 +1,6 @@
 package com.altruithm.backend.repository;
 
-import com.altruithm.entity.CharityFinancial;
+import com.altruithm.backend.Entity.CharityFinancial;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

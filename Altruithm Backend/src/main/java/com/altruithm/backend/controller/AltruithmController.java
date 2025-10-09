@@ -28,10 +28,7 @@ public class AltruithmController {
             @RequestParam(required = false) String category,
             @RequestParam(defaultValue = "10") int limit) {
 
-        FraudDetectionService fraudDetectionService = null;
-        List<CharityBasic> charities = fraudDetectionService
-                .getRecommendedCharities(category, limit);
-
+        List<CharityBasic> charities = fraudService.getRecommendedCharities(category, limit);
         return ResponseEntity.ok(charities);
     }
 
@@ -41,7 +38,7 @@ public class AltruithmController {
         Double amount = request.get("amount") != null ?
                 ((Number) request.get("amount")).doubleValue() : 0.0;
 
-        FraudRiskResponse response = fraudService.checkCharity(charityName, amount);
+        FraudRiskResponse response = fraudService.analyzeFraudRisk(charityName, amount);
         return ResponseEntity.ok(response);
     }
 }
