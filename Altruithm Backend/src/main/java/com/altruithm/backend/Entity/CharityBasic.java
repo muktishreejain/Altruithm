@@ -10,7 +10,7 @@ public class CharityBasic {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;  // ← CHANGED FROM Long
 
     @Column(name = "ascore")
     private Double ascore;
@@ -21,7 +21,7 @@ public class CharityBasic {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "ein", insertable = false, updatable = false)
+    @Column(name = "ein", insertable = false, updatable = false)  // ← ADDED
     private String einLowercase;
 
     @Column(name = "tot_exp")
@@ -42,7 +42,7 @@ public class CharityBasic {
     @Column(name = "score")
     private Double score;
 
-    @Column(name = "state", length = 10, insertable = false, updatable = false)
+    @Column(name = "state", length = 10, insertable = false, updatable = false)  // ← ADDED
     private String stateLowercase;
 
     @Column(name = "size", length = 50)

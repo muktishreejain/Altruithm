@@ -10,7 +10,7 @@ public class CharityFinancial {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer id;  // ← CHANGED FROM Long
 
     @Column(name = "ascore")
     private Double ascore;
