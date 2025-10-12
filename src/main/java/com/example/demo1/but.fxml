@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Altruithm - Global Trust Infrastructure for Social Impact</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+            * {
+            font-family: 'Inter', sans-serif;
+            }
+
+            .gradient-bg {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            }
+
+            .card-hover {
+            transition: all 0.3s ease;
+            }
+
+            .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+            }
+
+            .metric-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .glow-on-hover:hover {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+            }
+
+            .pulse-animation {
+            animation: pulse 2s infinite;
+            }
+
+            @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+            }
+
+            .floating {
+            animation: floating 3s ease-in-out infinite;
+            }
+
+            @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            }
+
+            .tab-active {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            }
+
+            .alert-high {
+            border-left: 4px solid #ef4444;
+            background: linear-gradient(90deg, rgba(239, 68, 68, 0.1), transparent);
+            }
+
+            .alert-medium {
+            border-left: 4px solid #f59e0b;
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.1), transparent);
+            }
+
+            .alert-low {
+            border-left: 4px solid #6b7280;
+            background: linear-gradient(90deg, rgba(107, 114, 128, 0.1), transparent);
+            }
+        </style>
+    </head>
+    <body class="bg-slate-900 text-white min-h-screen">
+        <!-- Header -->
+        <header class="gradient-bg px-6 py-8">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-8">
+                    <h1 class="text-5xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                        ALTRUITHM
+                    </h1>
+                    <p class="text-xl text-slate-300">Global Trust Infrastructure for Social Impact Funding</p>
+                </div>
+
+                <!-- Key Metrics -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
+                    <div class="metric-card rounded-xl p-6 text-center card-hover glow-on-hover">
+                        <div class="text-3xl font-bold text-green-400 mb-2">₹70,322 Cr</div>
+                        <div class="text-sm text-slate-300">Total Funding Tracked</div>
+                    </div>
+                    <div class="metric-card rounded-xl p-6 text-center card-hover glow-on-hover">
+                        <div class="text-3xl font-bold text-red-400 mb-2">94.7%</div>
+                        <div class="text-sm text-slate-300">Verified Impact Rate</div>
+                    </div>
+                    <div class="metric-card rounded-xl p-6 text-center card-hover glow-on-hover">
+                        <div class="text-3xl font-bold text-orange-400 mb-2">₹8,783 Cr</div>
+                        <div class="text-sm text-slate-300">Fraud Prevented</div>
+                    </div>
+                    <div class="metric-card rounded-xl p-6 text-center card-hover glow-on-hover">
+                        <div class="text-3xl font-bold text-purple-400 mb-2">2,811</div>
+                        <div class="text-sm text-slate-300">Active Projects</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-6 py-8">
+            <!-- Tab Navigation -->
+            <div class="flex flex-wrap gap-2 mb-8">
+                <button onclick="showTab('overview')" id="tab-overview" class="tab-button px-6 py-3 rounded-lg font-medium transition-all duration-300 tab-active">
+                    Global Overview
+                </button>
+                <button onclick="showTab('projects')" id="tab-projects" class="tab-button px-6 py-3 rounded-lg font-medium transition-all duration-300 bg-slate-800 hover:bg-slate-700">
+                    Project Monitoring
+                </button>
+                <button onclick="showTab('fraud')" id="tab-fraud" class="tab-button px-6 py-3 rounded-lg font-medium transition-all duration-300 bg-slate-800 hover:bg-slate-700">
+                    Fraud Detection
+                </button>
+                <button onclick="showTab('analytics')" id="tab-analytics" class="tab-button px-6 py-3 rounded-lg font-medium transition-all duration-300 bg-slate-800 hover:bg-slate-700">
+                    Impact Analytics
+                </button>
+            </div>
+
+            <!-- Tab Content -->
+            <!-- Overview Tab -->
+            <div id="overview-content" class="tab-content">
+                <!-- World Map Section -->
+                <div class="bg-slate-800 rounded-xl p-6 mb-8 card-hover">
+                    <h3 class="text-2xl font-bold mb-6">Global Funding Distribution</h3>
+                    <div class="bg-slate-700 rounded-lg h-96 flex items-center justify-center relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20"></div>
+                        <div class="text-center z-10">
+                            <div class="text-6xl mb-4 floating">🌍</div>
+                            <h4 class="text-xl font-semibold mb-2">Interactive World Map</h4>
+                            <p class="text-slate-300">Real-time funding flows by region</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-slate-800 rounded-xl p-6 card-hover">
+                        <h3 class="text-xl font-bold mb-4">Funding by Category</h3>
+                        <canvas id="fundingChart" class="max-h-80"></canvas>
+                    </div>
+                    <div class="bg-slate-800 rounded-xl p-6 card-hover">
+                        <h3 class="text-xl font-bold mb-4">Impact by Region</h3>
+                        <canvas id="impactChart" class="max-h-80"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projects Tab -->
+            <div id="projects-content" class="tab-content hidden">
+                <!-- Search and Filters -->
+                <div class="bg-slate-800 rounded-xl p-6 mb-8">
+                    <div class="flex flex-wrap gap-4 items-center">
+                        <div class="flex-1 min-w-64">
+                            <input type="text" placeholder="Search projects..."
+                                   class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                        </div>
+                        <select class="px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <option>All Categories</option>
+                            <option>Climate Action</option>
+                            <option>Healthcare</option>
+                            <option>Education</option>
+                        </select>
+                        <select class="px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <option>All Status</option>
+                            <option>Active</option>
+                            <option>Completed</option>
+                            <option>Under Review</option>
+                        </select>
+                        <button class="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-all duration-300 glow-on-hover">
+                            Refresh Data
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Projects Table -->
+                <div class="bg-slate-800 rounded-xl overflow-hidden card-hover">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-slate-700">
+                                <tr>
+                                    <th class="px-6 py-4 text-left font-semibold">Project Name</th>
+                                    <th class="px-6 py-4 text-left font-semibold">Category</th>
+                                    <th class="px-6 py-4 text-left font-semibold">Funding</th>
+                                    <th class="px-6 py-4 text-left font-semibold">Impact Score</th>
+                                    <th class="px-6 py-4 text-left font-semibold">Status</th>
+                                    <th class="px-6 py-4 text-left font-semibold">Risk Level</th>
+                                </tr>
+                            </thead>
+                            <tbody id="projectsTableBody">
+                                <!-- Table rows will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fraud Detection Tab -->
+            <div id="fraud-content" class="tab-content hidden">
+                <!-- Alerts Section -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold mb-6">Fraud Detection Alerts</h3>
+                    <div class="space-y-4">
+                        <div class="alert-high bg-slate-800 rounded-xl p-6 flex items-center justify-between card-hover">
+                            <div class="flex items-center gap-4">
+                                <span class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">HIGH</span>
+                                <span>Suspicious funding pattern detected in Project #4127</span>
+                            </div>
+                            <button class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg font-medium transition-all">
+                                Investigate
+                            </button>
+                        </div>
+                        <div class="alert-medium bg-slate-800 rounded-xl p-6 flex items-center justify-between card-hover">
+                            <div class="flex items-center gap-4">
+                                <span class="bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-bold">MEDIUM</span>
+                                <span>Unusual disbursement velocity in Climate Fund XY</span>
+                            </div>
+                            <button class="bg-orange-500 hover:bg-orange-600 px-4 py-2 rounded-lg font-medium transition-all">
+                                Investigate
+                            </button>
+                        </div>
+                        <div class="alert-low bg-slate-800 rounded-xl p-6 flex items-center justify-between card-hover">
+                            <div class="flex items-center gap-4">
+                                <span class="bg-gray-500 text-white px-3 py-1 rounded-full text-sm font-bold">LOW</span>
+                                <span>Verification pending for 3 new NGO registrations</span>
+                            </div>
+                            <button class="bg-gray-500 hover:bg-gray-600 px-4 py-2 rounded-lg font-medium transition-all">
+                                Investigate
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Risk Trends Chart -->
+                <div class="bg-slate-800 rounded-xl p-6 card-hover">
+                    <h3 class="text-xl font-bold mb-4">Fraud Risk Trends</h3>
+                    <canvas id="riskTrendChart" class="max-h-80"></canvas>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div id="analytics-content" class="tab-content hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- ROI Metrics -->
+                    <div class="space-y-6">
+                        <div class="bg-slate-800 rounded-xl p-6 card-hover glow-on-hover">
+                            <h4 class="text-lg font-medium text-slate-300 mb-2">Overall Impact ROI</h4>
+                            <div class="text-4xl font-bold text-green-400">327%</div>
+                        </div>
+                        <div class="bg-slate-800 rounded-xl p-6 card-hover glow-on-hover">
+                            <h4 class="text-lg font-medium text-slate-300 mb-2">Avg. Project Efficiency</h4>
+                            <div class="text-4xl font-bold text-blue-400">84.2%</div>
+                        </div>
+                        <div class="bg-slate-800 rounded-xl p-6 card-hover glow-on-hover">
+                            <h4 class="text-lg font-medium text-slate-300 mb-2">Resource Optimization</h4>
+                            <div class="text-4xl font-bold text-orange-400">+23%</div>
+                        </div>
+                    </div>
+
+                    <!-- Impact Trends Chart -->
+                    <div class="lg:col-span-2 bg-slate-800 rounded-xl p-6 card-hover">
+                        <h3 class="text-xl font-bold mb-4">Impact Trends Over Time</h3>
+                        <canvas id="impactTrendChart" class="max-h-80"></canvas>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Status Bar -->
+        <footer class="bg-slate-800 px-6 py-4 mt-12">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 bg-green-400 rounded-full pulse-animation"></div>
+                    <span class="text-green-400">System Status: All services operational</span>
+                </div>
+                <span class="text-slate-400" id="lastUpdated"></span>
+            </div>
+        </footer>
+
+        <script>
+            // Initialize charts and data
+            document.addEventListener('DOMContentLoaded', function() {
+            initializeCharts();
+            populateProjectsTable();
+            updateLastUpdated();
+            });
+
+            // Tab switching functionality
+            function showTab(tabName) {
+            // Hide all tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.add('hidden');
+            });
+
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-button').forEach(button => {
+            button.classList.remove('tab-active');
+            button.classList.add('bg-slate-800', 'hover:bg-slate-700');
+            });
+
+            // Show selected tab content
+            document.getElementById(tabName + '-content').classList.remove('hidden');
+
+            // Add active class to selected tab
+            const activeTab = document.getElementById('tab-' + tabName);
+            activeTab.classList.add('tab-active');
+            activeTab.classList.remove('bg-slate-800', 'hover:bg-slate-700');
+            }
+
+            // Initialize charts
+            function initializeCharts() {
+            // Funding Distribution Pie Chart
+            const fundingCtx = document.getElementById('fundingChart').getContext('2d');
+            new Chart(fundingCtx, {
+            type: 'doughnut',
+            data: {
+            labels: ['Climate Action', 'Healthcare', 'Education', 'Disaster Relief', 'Poverty Alleviation'],
+            datasets: [{
+            data: [28, 22, 18, 16, 16],
+            backgroundColor: [
+            '#10b981',
+            '#3b82f6',
+            '#8b5cf6',
+            '#f59e0b',
+            '#ef4444'
+            ],
+            borderWidth: 2,
+            borderColor: '#1e293b'
+            }]
+            },
+            options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+            legend: {
+            labels: {
+            color: '#e2e8f0'
+            }
+            }
+            }
+            }
+            });
+
+            // Regional Impact Bar Chart
+            const impactCtx = document.getElementById('impactChart').getContext('2d');
+            new Chart(impactCtx, {
+            type: 'bar',
+            data: {
+            labels: ['North America', 'Europe', 'Asia', 'Africa', 'South America'],
+            datasets: [{
+            label: 'Impact Score',
+            data: [92, 88, 85, 79, 82],
+            backgroundColor: '#3b82f6',
+            borderColor: '#1d4ed8',
+            borderWidth: 1
+            }]
+            },
+            options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+            legend: {
+            labels: {
+            color: '#e2e8f0'
+            }
+            }
+            },
+            scales: {
+            y: {
+            ticks: {
+            color: '#e2e8f0'
+            },
+            grid: {
+            color: '#374151'
+            }
+            },
+            x: {
+            ticks: {
+            color: '#e2e8f0'
+            },
+            grid: {
+            color: '#374151'
+            }
+            }
+            }
+            }
+            });
+
+            // Risk Trend Chart
+            const riskCtx = document.getElementById('riskTrendChart').getContext('2d');
+            new Chart(riskCtx, {
+            type: 'line',
+            data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+            label: 'Fraud Risk Score',
+            data: [15, 12, 18, 8, 6, 9],
+            borderColor: '#ef4444',
+            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+            tension: 0.4,
+            fill: true
+            }]
+            },
+            options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+            legend: {
+            labels: {
+            color: '#e2e8f0'
+            }
+            }
+            },
+            scales: {
+            y: {
+            ticks: {
+            color: '#e2e8f0'
+            },
+            grid: {
+            color: '#374151'
+            }
+            },
+            x: {
+            ticks: {
+            color: '#e2e8f0'
+            },
+            grid: {
+            color: '#374151'
+            }
+            }
+            }
+            }
+            });
+
+            // Impact Trend Chart for Analytics
+            const impactTrendCtx = document.getElementById('impactTrendChart').getContext('2d');
+            new Chart(impactTrendCtx, {
+            type: 'line',
+            data: {
+            labels: ['Q1 2024', 'Q2 2024', 'Q3 2024', 'Q4 2024'],
+            datasets: [
+            {
+            label: 'Verified Impact',
+            data: [234, 287, 342, 398],
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            tension: 0.4
+            },
+            {
+            label: 'Projected Impact',
+            data: [245, 295, 335, 385],
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            tension: 0.4,
+            borderDash: [5, 5]
+            }
+            ]
+            },
+            options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+            legend: {
+            labels: {
+            color: '#e2e8f0'
+            }
+            }
+            },
+            scales: {
+            y: {
+            ticks: {
+            color: '#e2e8f0'
+            },
+            grid: {
+            color: '#374151'
+            }
+            },
+            x: {
+            ticks: {
+            color: '#e2e8f0'
+            },
+            grid: {
+            color: '#374151'
+            }
+            }
+            }
+            }
+            });
+            }
+
+            // Populate projects table
+            function populateProjectsTable() {
+            const projects = [
+            { name: 'Clean Water Initiative', category: 'Healthcare', funding: '₹2.5 Cr', impact: '94%', status: 'Active', risk: 'Low' },
+            { name: 'Solar Schools Program', category: 'Education', funding: '₹1.8 Cr', impact: '87%', status: 'Active', risk: 'Low' },
+            { name: 'Disaster Relief Fund', category: 'Emergency', funding: '₹5.2 Cr', impact: '91%', status: 'Active', risk: 'Medium' },
+            { name: 'Reforestation Project', category: 'Climate', funding: '₹3.1 Cr', impact: '89%', status: 'Completed', risk: 'Low' },
+            { name: 'Food Security Initiative', category: 'Poverty', funding: '₹4.7 Cr', impact: '76%', status: 'Under Review', risk: 'High' }
+            ];
+
+            const tbody = document.getElementById('projectsTableBody');
+            tbody.innerHTML = projects.map(project => `
+            <tr class="border-b border-slate-700 hover:bg-slate-700/50 transition-colors">
+                <td class="px-6 py-4 font-medium">${project.name}</td>
+                <td class="px-6 py-4">${project.category}</td>
+                <td class="px-6 py-4">${project.funding}</td>
+                <td class="px-6 py-4">${project.impact}</td>
+                <td class="px-6 py-4">
+                    <span class="px-2 py-1 rounded-full text-xs ${getStatusColor(project.status)}">
+                        ${project.status}
+                    </span>
+                </td>
+                <td class="px-6 py-4">
+                    <span class="px-2 py-1 rounded-full text-xs ${getRiskColor(project.risk)}">
+                        ${project.risk}
+                    </span>
+                </td>
+            </tr>
+            `).join('');
+            }
+
+            function getStatusColor(status) {
+            switch(status) {
+            case 'Active': return 'bg-green-600 text-white';
+            case 'Completed': return 'bg-blue-600 text-white';
+            case 'Under Review': return 'bg-orange-600 text-white';
+            default: return 'bg-gray-600 text-white';
+            }
+            }
+
+            function getRiskColor(risk) {
+            switch(risk) {
+            case 'Low': return 'bg-green-600 text-white';
+            case 'Medium': return 'bg-orange-600 text-white';
+            case 'High': return 'bg-red-600 text-white';
+            default: return 'bg-gray-600 text-white';
+            }
+            }
+
+            function updateLastUpdated() {
+            const now = new Date();
+            document.getElementById('lastUpdated').textContent =
+            `Last Updated: ${now.toLocaleString()}`;
+            }
+
+            // Auto-refresh last updated time every minute
+            setInterval(updateLastUpdated, 60000);
+        </script>
+    </body>
+</html>
