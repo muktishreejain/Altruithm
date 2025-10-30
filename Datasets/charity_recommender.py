@@ -1,50 +1,51 @@
 # charity_recommender.py
-
+import sys
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-# Step 1: Load the dataset
-# Make sure 'charity.csv' is in the same folder as this Python file
+# Load dataset
 df = pd.read_csv('charity.csv')
 
-# Step 2: Preview the data
-print("Dataset Loaded Successfully! Here are the first 5 entries:\n")
-print(df.head())
+# Combine textual fields
+df['combined'] = (
+    df['name'].astype(str) + " " +
+    df['description'].astype(str) + " " +
+    df['category'].astype(str)
+)
 
-# Step 3: Combine relevant text columns into one string
-# (Change column names below based on your CSV headers)
-df['combined'] = df['Charity Name'].astype(str) + " " + df['Description'].astype(str) + " " + df['Cause'].astype(str)
-
-# Step 4: Convert text data into TF-IDF matrix
+# TF-IDF vectorization
 vectorizer = TfidfVectorizer(stop_words='english')
 tfidf_matrix = vectorizer.fit_transform(df['combined'])
-
-# Step 5: Compute similarity matrix
 cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
 
-# Step 6: Function to get recommendations
-def recommend_charity(charity_name, top_n=5):
-    # Check if the charity exists
-    if charity_name not in df['Charity Name'].values:
-        print(f"'{charity_name}' not found in dataset.")
+def recommend_similar_charities(charity_name, top_n=5):
+    if charity_name not in df['name'].values:
         return []
-
-    # Get index of the charity
-    idx = df[df['Charity Name'] == charity_name].index[0]
+    idx = df[df['name'] == charity_name].index[0]
     sim_scores = list(enumerate(cosine_sim[idx]))
-    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-    sim_scores = sim_scores[1:top_n+1]  # Exclude the charity itself
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)[1:top_n+1]
+    indices = [i[0] for i in sim_scores]
+    return df.iloc[indices][['name', 'description', 'category']].to_dict(orient='records')
 
-    charity_indices = [i[0] for i in sim_scores]
-    recommended = df.iloc[charity_indices][['Charity Name', 'Description', 'Cause']]
-    return recommended
+def recommend_by_interest(interest, top_n=5):
+    interest_vec = vectorizer.transform([interest])
+    sim_scores = cosine_similarity(interest_vec, tfidf_matrix).flatten()
+    top_indices = sim_scores.argsort()[-top_n:][::-1]
+    return df.iloc[top_indices][['name', 'description', 'category']].to_dict(orient='records')
 
-# Step 7: Example run
-print("\nExample Recommendation:")
-example_charity = input("Enter a charity name to find similar ones: ")
-recommendations = recommend_charity(example_charity)
+# Command-line interface for Java
+# Usage from Java: python charity_recommender.py mode "input text"
+if __name__ == "__main__":
+    mode = sys.argv[1]   # either 'similar' or 'interest'
+    input_text = sys.argv[2]
 
-if len(recommendations) > 0:
-    print("\nTop Similar Charities:\n")
-    print(recommendations)
+    if mode == "similar":
+        results = recommend_similar_charities(input_text)
+    elif mode == "interest":
+        results = recommend_by_interest(input_text)
+    else:
+        results = []
+
+    for r in results:
+        print(f"{r['name']}|{r['category']}|{r['description'][:120]}...")
