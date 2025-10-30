@@ -4,6 +4,8 @@ public class FraudCheckRequest {
     private String charityName;
     private Double amount;
 
+    public FraudCheckRequest() {} // for reflective serializers
+
     public FraudCheckRequest(String charityName, Double amount) {
         this.charityName = charityName;
         this.amount = amount;
