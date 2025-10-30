@@ -1,13 +1,19 @@
 package com.example.demo1;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
 import javafx.scene.layout.*;
@@ -16,12 +22,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.animation.TranslateTransition;
-import javafx.animation.Timeline;
-import javafx.animation.KeyFrame;
 import javafx.util.Duration;
 
 public class AltruithmDashboard extends Application {
@@ -38,23 +38,18 @@ public class AltruithmDashboard extends Application {
         this.primaryStage = primaryStage;
         primaryStage.setTitle("Altruithm - Global Trust Infrastructure for Social Impact");
 
-        // Create main layout
         BorderPane mainLayout = new BorderPane();
         mainLayout.getStyleClass().add("main-layout");
 
-        // Vertical sidebar
         VBox sidebar = createVerticalSidebar();
         mainLayout.setLeft(sidebar);
 
-        // Main content area
         contentArea = new StackPane();
         contentArea.getStyleClass().add("content-area");
 
-        // Show overview by default
         showOverviewContent();
         mainLayout.setCenter(contentArea);
 
-        // Status bar
         HBox statusBar = createStatusBar();
         mainLayout.setBottom(statusBar);
 
@@ -74,7 +69,6 @@ public class AltruithmDashboard extends Application {
         sidebar.setMinWidth(280);
         sidebar.setMaxWidth(280);
 
-        // Logo/Brand section
         VBox brandSection = new VBox(8);
         brandSection.getStyleClass().add("brand-section");
         brandSection.setAlignment(Pos.CENTER);
@@ -94,10 +88,8 @@ public class AltruithmDashboard extends Application {
 
         brandSection.getChildren().addAll(logoIcon, brandLabel, brandSubtitle);
 
-        // Metrics section
         VBox metricsSection = createSidebarMetrics();
 
-        // Navigation section
         VBox navSection = new VBox(8);
         navSection.getStyleClass().add("nav-section");
         navSection.setPadding(new Insets(20, 15, 20, 15));
@@ -109,31 +101,30 @@ public class AltruithmDashboard extends Application {
         Button overviewBtn = createNavButton("", "Global Overview", true);
         Button projectsBtn = createNavButton("", "Project Monitoring", false);
         Button fraudBtn = createNavButton("", "Fraud Detection", false);
-        Button analyticsBtn = createNavButton("", "Impact Analytics", false);
+        Button recommenderBtn = createNavButton("", "Charity Recommender", false);
 
         overviewBtn.setOnAction(e -> {
-            setActiveButton(overviewBtn, projectsBtn, fraudBtn, analyticsBtn);
+            setActiveButton(overviewBtn, projectsBtn, fraudBtn, recommenderBtn);
             showOverviewContent();
         });
         projectsBtn.setOnAction(e -> {
-            setActiveButton(projectsBtn, overviewBtn, fraudBtn, analyticsBtn);
+            setActiveButton(projectsBtn, overviewBtn, fraudBtn, recommenderBtn);
             showProjectsContent();
         });
         fraudBtn.setOnAction(e -> {
-            setActiveButton(fraudBtn, overviewBtn, projectsBtn, analyticsBtn);
+            setActiveButton(fraudBtn, overviewBtn, projectsBtn, recommenderBtn);
             showFraudDetectionContent();
         });
-        analyticsBtn.setOnAction(e -> {
-            setActiveButton(analyticsBtn, overviewBtn, projectsBtn, fraudBtn);
-            showAnalyticsContent();
+        recommenderBtn.setOnAction(e -> {
+            setActiveButton(recommenderBtn, overviewBtn, projectsBtn, fraudBtn);
+            showCharityRecommenderContent();
         });
 
-        navSection.getChildren().addAll(navTitle, overviewBtn, projectsBtn, fraudBtn, analyticsBtn);
+        navSection.getChildren().addAll(navTitle, overviewBtn, projectsBtn, fraudBtn, recommenderBtn);
 
         Region spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
 
-        // System info at bottom
         VBox systemInfo = createSystemInfo();
 
         sidebar.getChildren().addAll(brandSection, metricsSection, navSection, spacer, systemInfo);
@@ -150,9 +141,9 @@ public class AltruithmDashboard extends Application {
         metricsTitle.setFont(Font.font("Arial", FontWeight.BOLD, 11));
 
         VBox metric1 = createCompactMetric("₹70,322 Cr", "Total Funding", "metric-green");
-        VBox metric2 = createCompactMetric("94.7%", "Impact Rate", "metric-green");
-        VBox metric3 = createCompactMetric("₹8,783 Cr", "Fraud Prevented", "metric-green");
-        VBox metric4 = createCompactMetric("2,811", "Active Projects", "metric-green");
+        VBox metric2 = createCompactMetric("94.7%", "Impact Rate", "metric-red");
+        VBox metric3 = createCompactMetric("₹8,783 Cr", "Fraud Prevented", "metric-orange");
+        VBox metric4 = createCompactMetric("2,811", "Active Projects", "metric-purple");
 
         metricsSection.getChildren().addAll(metricsTitle, metric1, metric2, metric3, metric4);
         return metricsSection;
@@ -256,8 +247,8 @@ public class AltruithmDashboard extends Application {
         contentArea.getChildren().add(content);
     }
 
-    private void showAnalyticsContent() {
-        ScrollPane content = createAnalyticsContent();
+    private void showCharityRecommenderContent() {
+        ScrollPane content = createCharityRecommenderContent();
         contentArea.getChildren().clear();
         contentArea.getChildren().add(content);
     }
@@ -267,13 +258,10 @@ public class AltruithmDashboard extends Application {
         content.setPadding(new Insets(30));
         content.getStyleClass().add("tab-content");
 
-        // Header
         VBox header = createContentHeader("🌍 Global Overview", "Real-time monitoring of global funding distribution");
 
-        // World map section
         VBox mapSection = createMapSection();
 
-        // Charts row
         HBox chartsRow = new HBox(20);
         chartsRow.setAlignment(Pos.CENTER);
 
@@ -395,11 +383,149 @@ public class AltruithmDashboard extends Application {
 
         VBox header = createContentHeader("🛡 Fraud Detection", "AI-powered fraud detection and risk analysis");
 
-        VBox alertSection = createEnhancedAlertSection();
-        impactTrendChart = createEnhancedLineChart();
-        VBox trendChartContainer = createChartContainer("Fraud Risk Trends", impactTrendChart);
+        VBox form = new VBox(15.0);
+        form.getStyleClass().add("card-container");
+        form.setPadding(new Insets(25.0));
+        form.setMaxWidth(600);
 
-        content.getChildren().addAll(header, alertSection, trendChartContainer);
+        Label formTitle = new Label("🔍 Check Charity Fraud Risk");
+        formTitle.setFont(Font.font("Arial", FontWeight.BOLD, 20.0));
+        formTitle.setTextFill(Color.WHITE);
+
+        TextField charityField = new TextField();
+        charityField.setPromptText("e.g., American Red Cross");
+        charityField.setStyle("-fx-background-color: #252b47; -fx-text-fill: white; -fx-prompt-text-fill: #6677aa;");
+
+        TextField amountField = new TextField();
+        amountField.setPromptText("e.g., 1000");
+        amountField.setStyle("-fx-background-color: #252b47; -fx-text-fill: white; -fx-prompt-text-fill: #6677aa;");
+
+        Label charityLabel = new Label("Charity Name:");
+        charityLabel.setTextFill(Color.web("#b0b8d0"));
+        Label amountLabel = new Label("Donation Amount (₹):");
+        amountLabel.setTextFill(Color.web("#b0b8d0"));
+
+        Button checkButton = new Button("🔍 Check Risk");
+        checkButton.setStyle("-fx-background-color: #7289da; -fx-text-fill: white; -fx-padding: 10 20;");
+
+        Button clearButton = new Button("Clear");
+        clearButton.setStyle("-fx-background-color: #2a3557; -fx-text-fill: white; -fx-padding: 10 20;");
+
+        ProgressIndicator loadingIndicator = new ProgressIndicator();
+        loadingIndicator.setVisible(false);
+        loadingIndicator.setPrefSize(30, 30);
+
+        HBox buttonBox = new HBox(15, checkButton, clearButton, loadingIndicator);
+        buttonBox.setAlignment(Pos.CENTER_LEFT);
+
+        VBox resultsBox = new VBox(15.0);
+        resultsBox.setStyle("-fx-background-color: #252b47; -fx-background-radius: 10; -fx-padding: 20;");
+        resultsBox.setVisible(false);
+
+        Label riskLevelLabel = new Label();
+        riskLevelLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24.0));
+
+        Label riskScoreLabel = new Label();
+        riskScoreLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 16.0));
+        riskScoreLabel.setTextFill(Color.WHITE);
+
+        Label recommendationLabel = new Label();
+        recommendationLabel.setWrapText(true);
+        recommendationLabel.setTextFill(Color.web("#b0b8d0"));
+
+        TextArea warningsArea = new TextArea();
+        warningsArea.setEditable(false);
+        warningsArea.setWrapText(true);
+        warningsArea.setPrefHeight(100.0);
+        warningsArea.setStyle("-fx-control-inner-background: #1a1f3a; -fx-text-fill: white;");
+
+        resultsBox.getChildren().addAll(riskLevelLabel, riskScoreLabel, recommendationLabel, warningsArea);
+
+        clearButton.setOnAction(e -> {
+            charityField.clear();
+            amountField.clear();
+            resultsBox.setVisible(false);
+        });
+
+        checkButton.setOnAction(e -> {
+            String charityName = charityField.getText().trim();
+            String amountText = amountField.getText().trim();
+
+            if (charityName.isEmpty() || amountText.isEmpty()) {
+                showAlert("Error", "Please fill all fields");
+                return;
+            }
+
+            double amount;
+            try {
+                amount = Double.parseDouble(amountText);
+                if (amount <= 0) {
+                    showAlert("Error", "Amount must be greater than 0");
+                    return;
+                }
+            } catch (NumberFormatException ex) {
+                showAlert("Error", "Invalid amount");
+                return;
+            }
+
+            loadingIndicator.setVisible(true);
+            checkButton.setDisable(true);
+
+            Task<FraudCheckResponse> fraudTask = new Task<>() {
+                @Override
+                protected FraudCheckResponse call() throws Exception {
+                    AltruithmApiService apiService = new AltruithmApiService();
+                    return apiService.checkFraud(charityName, amount);
+                }
+            };
+
+            fraudTask.setOnSucceeded(event -> {
+                FraudCheckResponse response = fraudTask.getValue();
+                resultsBox.setVisible(true);
+
+                riskLevelLabel.setText("Risk Level: " + response.getRiskLevel());
+                switch (response.getRiskLevel()) {
+                    case "LOW": riskLevelLabel.setTextFill(Color.web("#00ff88")); break;
+                    case "MEDIUM": riskLevelLabel.setTextFill(Color.web("#ffaa00")); break;
+                    case "HIGH": riskLevelLabel.setTextFill(Color.web("#ff4444")); break;
+                    default: riskLevelLabel.setTextFill(Color.WHITE); break;
+                }
+
+                riskScoreLabel.setText(String.format("Risk Score: %.2f", response.getRiskScore()));
+                recommendationLabel.setText("Recommendation: " + response.getRecommendation());
+
+                StringBuilder warnings = new StringBuilder();
+                if (response.getWarnings() != null && !response.getWarnings().isEmpty()) {
+                    for (String warning : response.getWarnings()) {
+                        warnings.append("• ").append(warning).append("\n");
+                    }
+                } else {
+                    warnings.append("No warnings");
+                }
+                warningsArea.setText(warnings.toString());
+
+                loadingIndicator.setVisible(false);
+                checkButton.setDisable(false);
+            });
+
+            fraudTask.setOnFailed(event -> {
+                showAlert("Error", "Failed: " + fraudTask.getException().getMessage());
+                loadingIndicator.setVisible(false);
+                checkButton.setDisable(false);
+            });
+
+            new Thread(fraudTask).start();
+        });
+
+        form.getChildren().addAll(
+                formTitle,
+                charityLabel, charityField,
+                amountLabel, amountField,
+                buttonBox,
+                resultsBox
+        );
+
+        content.getChildren().addAll(header, form);
 
         ScrollPane scrollPane = new ScrollPane(content);
         scrollPane.getStyleClass().add("scroll-pane");
@@ -407,28 +533,172 @@ public class AltruithmDashboard extends Application {
         return scrollPane;
     }
 
-    private ScrollPane createAnalyticsContent() {
+    private ScrollPane createCharityRecommenderContent() {
         VBox content = new VBox(25);
         content.setPadding(new Insets(30));
         content.getStyleClass().add("tab-content");
 
-        VBox header = createContentHeader("📈 Impact Analytics", "Comprehensive analysis of social impact metrics");
+        VBox header = createContentHeader("💡 Charity Recommender", "Find charities similar to ones you trust or based on your interests");
 
-        HBox roiSection = new HBox(20);
-        roiSection.setAlignment(Pos.CENTER);
+        HBox modeToggle = new HBox(15);
+        modeToggle.setAlignment(Pos.CENTER_LEFT);
+        modeToggle.setPadding(new Insets(10, 0, 10, 0));
 
-        VBox roiMetrics = new VBox(15);
-        roiMetrics.getChildren().addAll(
-                createAnalyticsCard("Overall Impact ROI", "327%", "analytics-green"),
-                createAnalyticsCard("Avg. Project Efficiency", "84.2%", "analytics-blue"),
-                createAnalyticsCard("Resource Optimization", "+23%", "analytics-orange")
-        );
+        ToggleGroup modeGroup = new ToggleGroup();
 
-        LineChart<String, Number> impactChart = createDetailedImpactChart();
-        VBox impactChartContainer = createChartContainer("Impact Trends Over Time", impactChart);
+        RadioButton charityModeBtn = new RadioButton("Find Similar Charities");
+        charityModeBtn.setToggleGroup(modeGroup);
+        charityModeBtn.setSelected(true);
+        charityModeBtn.setTextFill(Color.WHITE);
+        charityModeBtn.setFont(Font.font("Arial", FontWeight.BOLD, 14));
 
-        roiSection.getChildren().addAll(roiMetrics, impactChartContainer);
-        content.getChildren().addAll(header, roiSection);
+        RadioButton interestModeBtn = new RadioButton("Recommend by Interests");
+        interestModeBtn.setToggleGroup(modeGroup);
+        interestModeBtn.setTextFill(Color.WHITE);
+        interestModeBtn.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+
+        modeToggle.getChildren().addAll(charityModeBtn, interestModeBtn);
+
+        VBox formContainer = new VBox(20);
+        formContainer.getStyleClass().add("card-container");
+        formContainer.setPadding(new Insets(25));
+        formContainer.setMaxWidth(700);
+
+        VBox charityForm = new VBox(15);
+
+        Label charityFormTitle = new Label("🔍 Find Similar Charities");
+        charityFormTitle.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        charityFormTitle.setTextFill(Color.WHITE);
+
+        Label charityLabel = new Label("Enter Charity Name:");
+        charityLabel.setTextFill(Color.web("#b0b8d0"));
+        charityLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
+
+        TextField charityNameField = new TextField();
+        charityNameField.setPromptText("e.g., Oxfam, Doctors Without Borders, WWF");
+        charityNameField.setStyle("-fx-background-color: #252b47; -fx-text-fill: white; -fx-prompt-text-fill: #6677aa; -fx-padding: 10;");
+        charityNameField.setFont(Font.font("Arial", 14));
+
+        VBox interestForm = new VBox(10);
+        interestForm.setVisible(false);
+
+        Label interestFormTitle = new Label("🎯 Recommend by Interests");
+        interestFormTitle.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        interestFormTitle.setTextFill(Color.WHITE);
+
+        Label interestLabel = new Label("Enter Your Interests (comma-separated):");
+        interestLabel.setTextFill(Color.web("#b0b8d0"));
+        interestLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
+
+        TextArea interestsField = new TextArea();
+        interestsField.setPromptText("e.g., climate change, education, healthcare, animal welfare");
+        interestsField.setPrefRowCount(3);
+        interestsField.setWrapText(true);
+        interestsField.setStyle("-fx-control-inner-background: #252b47; -fx-text-fill: white; -fx-prompt-text-fill: #6677aa;");
+        interestsField.setFont(Font.font("Arial", 14));
+
+        ProgressIndicator loadingIndicator = new ProgressIndicator();
+        loadingIndicator.setVisible(false);
+        loadingIndicator.setPrefSize(30, 30);
+
+        Button recommendButton = new Button("🚀 Get Recommendations");
+        recommendButton.setStyle("-fx-background-color: #7289da; -fx-text-fill: white; -fx-padding: 12 24; -fx-font-size: 14;");
+        addButtonHoverEffect(recommendButton);
+
+        Button clearButton = new Button("Clear");
+        clearButton.setStyle("-fx-background-color: #2a3557; -fx-text-fill: white; -fx-padding: 12 24; -fx-font-size: 14;");
+        addButtonHoverEffect(clearButton);
+
+        HBox buttonBox = new HBox(15, recommendButton, clearButton, loadingIndicator);
+        buttonBox.setAlignment(Pos.CENTER_LEFT);
+
+        VBox resultsContainer = new VBox(15);
+        resultsContainer.setVisible(false);
+        resultsContainer.setStyle("-fx-background-color: #252b47; -fx-background-radius: 10; -fx-padding: 20;");
+
+        Label resultsTitle = new Label("Recommended Charities");
+        resultsTitle.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        resultsTitle.setTextFill(Color.WHITE);
+
+        VBox charitiesList = new VBox(12);
+
+        resultsContainer.getChildren().addAll(resultsTitle, charitiesList);
+
+        charityModeBtn.setOnAction(e -> {
+            charityForm.setVisible(true);
+            interestForm.setVisible(false);
+            resultsContainer.setVisible(false);
+        });
+
+        interestModeBtn.setOnAction(e -> {
+            charityForm.setVisible(false);
+            interestForm.setVisible(true);
+            resultsContainer.setVisible(false);
+        });
+
+        clearButton.setOnAction(e -> {
+            charityNameField.clear();
+            interestsField.clear();
+            resultsContainer.setVisible(false);
+        });
+
+        recommendButton.setOnAction(e -> {
+            boolean isCharityMode = charityModeBtn.isSelected();
+            String input = isCharityMode ? charityNameField.getText().trim() : interestsField.getText().trim();
+
+            if (input.isEmpty()) {
+                showAlert("Error", "Please enter " + (isCharityMode ? "a charity name" : "your interests"));
+                return;
+            }
+
+            loadingIndicator.setVisible(true);
+            recommendButton.setDisable(true);
+
+            Task<CharityRecommendationResponse> recommendTask = new Task<CharityRecommendationResponse>() {
+                @Override
+                protected CharityRecommendationResponse call() throws Exception {
+                    AltruithmApiService apiService = new AltruithmApiService();
+                    if (isCharityMode) {
+                        return apiService.getSimilarCharities(input);
+                    } else {
+                        return apiService.getCharitiesByInterests(input);
+                    }
+                }
+            };
+
+            recommendTask.setOnSucceeded(event -> {
+                CharityRecommendationResponse response = recommendTask.getValue();
+                charitiesList.getChildren().clear();
+
+                if (response.getCharities() != null && !response.getCharities().isEmpty()) {
+                    for (CharityRecommendation charity : response.getCharities()) {
+                        VBox charityCard = createCharityCard(charity);
+                        charitiesList.getChildren().add(charityCard);
+                    }
+                    resultsContainer.setVisible(true);
+                } else {
+                    showAlert("No Results", "No charities found. Please try different search terms.");
+                }
+
+                loadingIndicator.setVisible(false);
+                recommendButton.setDisable(false);
+            });
+
+            recommendTask.setOnFailed(event -> {
+                showAlert("Error", "Failed to get recommendations: " + recommendTask.getException().getMessage());
+                loadingIndicator.setVisible(false);
+                recommendButton.setDisable(false);
+            });
+
+            new Thread(recommendTask).start();
+        });
+
+        charityForm.getChildren().addAll(charityFormTitle, charityLabel, charityNameField);
+        interestForm.getChildren().addAll(interestFormTitle, interestLabel, interestsField);
+
+        formContainer.getChildren().addAll(charityForm, interestForm, buttonBox, resultsContainer);
+
+        content.getChildren().addAll(header, modeToggle, formContainer);
 
         ScrollPane scrollPane = new ScrollPane(content);
         scrollPane.getStyleClass().add("scroll-pane");
@@ -436,64 +706,55 @@ public class AltruithmDashboard extends Application {
         return scrollPane;
     }
 
-    private VBox createAnalyticsCard(String title, String value, String colorClass) {
-        VBox card = new VBox(8);
-        card.getStyleClass().addAll("analytics-card", "card-hover-fixed");
-        card.setAlignment(Pos.CENTER_LEFT);
-        card.setPrefWidth(230);
-        card.setPrefHeight(90);
-
-        Label titleLabel = new Label(title);
-        titleLabel.getStyleClass().add("analytics-title");
-        titleLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
-
-        Label valueLabel = new Label(value);
-        valueLabel.getStyleClass().addAll("analytics-value", colorClass);
-        valueLabel.setFont(Font.font("Arial", FontWeight.BOLD, 32));
-
+    private VBox createCharityCard(CharityRecommendation charity) {
+        VBox card = new VBox(10);
+        card.setStyle("-fx-background-color: #1a1f3a; -fx-background-radius: 8; -fx-padding: 15; -fx-border-color: #7289da; -fx-border-width: 1; -fx-border-radius: 8;");
         addFixedHoverAnimation(card);
 
-        card.getChildren().addAll(titleLabel, valueLabel);
+        Label nameLabel = new Label(charity.getName());
+        nameLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+        nameLabel.setTextFill(Color.WHITE);
+
+        Label categoryLabel = new Label("Category: " + charity.getCategory());
+        categoryLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 13));
+        categoryLabel.setTextFill(Color.web("#b0b8d0"));
+
+        Label descLabel = new Label(charity.getDescription());
+        descLabel.setWrapText(true);
+        descLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
+        descLabel.setTextFill(Color.web("#d0d8e8"));
+
+        HBox metricsBox = new HBox(20);
+        metricsBox.setAlignment(Pos.CENTER_LEFT);
+
+        Label matchScoreLabel = new Label(String.format("Match: %.0f%%", charity.getMatchScore()));
+        matchScoreLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        matchScoreLabel.setTextFill(Color.web("#00ff88"));
+
+        Label impactLabel = new Label("Impact: " + charity.getImpactRating() + "/5");
+        impactLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 13));
+        impactLabel.setTextFill(Color.web("#ffaa00"));
+
+        Label trustLabel = new Label("Trust: " + charity.getTrustScore() + "%");
+        trustLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 13));
+        trustLabel.setTextFill(Color.web("#7289da"));
+
+        metricsBox.getChildren().addAll(matchScoreLabel, impactLabel, trustLabel);
+
+        Button learnMoreBtn = new Button("🔗 Learn More");
+        learnMoreBtn.setStyle("-fx-background-color: #7289da; -fx-text-fill: white; -fx-padding: 8 16;");
+        addButtonHoverEffect(learnMoreBtn);
+
+        card.getChildren().addAll(nameLabel, categoryLabel, descLabel, metricsBox, learnMoreBtn);
         return card;
     }
 
-    private VBox createEnhancedAlertSection() {
-        VBox alertSection = new VBox(12);
-        alertSection.getStyleClass().add("alert-section");
-
-        HBox highAlert = createEnhancedAlert("HIGH", "Suspicious funding pattern detected in Project #4127", "alert-high");
-        HBox mediumAlert = createEnhancedAlert("MEDIUM", "Unusual disbursement velocity in Climate Fund XY", "alert-medium");
-        HBox lowAlert = createEnhancedAlert("LOW", "Verification pending for 3 new NGO registrations", "alert-low");
-
-        alertSection.getChildren().addAll(highAlert, mediumAlert, lowAlert);
-        return alertSection;
-    }
-
-    private HBox createEnhancedAlert(String level, String message, String alertClass) {
-        HBox alert = new HBox(15);
-        alert.getStyleClass().addAll("alert-container", alertClass, "card-hover-fixed");
-        alert.setAlignment(Pos.CENTER_LEFT);
-        alert.setPadding(new Insets(15));
-
-        Label levelLabel = new Label(level);
-        levelLabel.getStyleClass().add("alert-level");
-        levelLabel.setFont(Font.font("Arial", FontWeight.BOLD, 11));
-
-        Label messageLabel = new Label(message);
-        messageLabel.getStyleClass().add("alert-message");
-        messageLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
-
-        Button actionButton = new Button("🔍 Investigate");
-        actionButton.getStyleClass().addAll("alert-button", "button-hover");
-        addButtonHoverEffect(actionButton);
-
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-
-        addFixedHoverAnimation(alert);
-
-        alert.getChildren().addAll(levelLabel, messageLabel, spacer, actionButton);
-        return alert;
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     private TableView<FundingProject> createEnhancedProjectTable() {
@@ -588,63 +849,6 @@ public class AltruithmDashboard extends Application {
         return chart;
     }
 
-    private LineChart<String, Number> createEnhancedLineChart() {
-        CategoryAxis xAxis = new CategoryAxis();
-        NumberAxis yAxis = new NumberAxis();
-        xAxis.getStyleClass().add("chart-axis");
-        yAxis.getStyleClass().add("chart-axis");
-
-        LineChart<String, Number> chart = new LineChart<>(xAxis, yAxis);
-        chart.getStyleClass().add("enhanced-line-chart");
-
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName("Risk Score");
-        series.getData().addAll(
-                new XYChart.Data<>("Jan", 15),
-                new XYChart.Data<>("Feb", 12),
-                new XYChart.Data<>("Mar", 18),
-                new XYChart.Data<>("Apr", 8),
-                new XYChart.Data<>("May", 6),
-                new XYChart.Data<>("Jun", 9)
-        );
-
-        chart.getData().add(series);
-        chart.setPrefSize(600, 300);
-        return chart;
-    }
-
-    private LineChart<String, Number> createDetailedImpactChart() {
-        CategoryAxis xAxis = new CategoryAxis();
-        NumberAxis yAxis = new NumberAxis();
-        xAxis.getStyleClass().add("chart-axis");
-        yAxis.getStyleClass().add("chart-axis");
-
-        LineChart<String, Number> chart = new LineChart<>(xAxis, yAxis);
-        chart.getStyleClass().add("enhanced-line-chart");
-
-        XYChart.Series<String, Number> series1 = new XYChart.Series<>();
-        series1.setName("Verified Impact");
-        series1.getData().addAll(
-                new XYChart.Data<>("Q1 2024", 234),
-                new XYChart.Data<>("Q2 2024", 287),
-                new XYChart.Data<>("Q3 2024", 342),
-                new XYChart.Data<>("Q4 2024", 398)
-        );
-
-        XYChart.Series<String, Number> series2 = new XYChart.Series<>();
-        series2.setName("Projected Impact");
-        series2.getData().addAll(
-                new XYChart.Data<>("Q1 2024", 245),
-                new XYChart.Data<>("Q2 2024", 295),
-                new XYChart.Data<>("Q3 2024", 335),
-                new XYChart.Data<>("Q4 2024", 385)
-        );
-
-        chart.getData().addAll(series1, series2);
-        chart.setPrefSize(500, 300);
-        return chart;
-    }
-
     private HBox createStatusBar() {
         HBox statusBar = new HBox();
         statusBar.getStyleClass().add("status-bar");
@@ -705,6 +909,7 @@ public class AltruithmDashboard extends Application {
         launch(args);
     }
 
+    // Data Classes
     public static class FundingProject {
         private String name;
         private String category;
@@ -735,5 +940,41 @@ public class AltruithmDashboard extends Application {
         public void setImpactScore(String impactScore) { this.impactScore = impactScore; }
         public void setStatus(String status) { this.status = status; }
         public void setRiskLevel(String riskLevel) { this.riskLevel = riskLevel; }
+    }
+
+    public static class CharityRecommendation {
+        private String name;
+        private String category;
+        private String description;
+        private double matchScore;
+        private double impactRating;
+        private int trustScore;
+
+        public CharityRecommendation(String name, String category, String description,
+                                     double matchScore, double impactRating, int trustScore) {
+            this.name = name;
+            this.category = category;
+            this.description = description;
+            this.matchScore = matchScore;
+            this.impactRating = impactRating;
+            this.trustScore = trustScore;
+        }
+
+        public String getName() { return name; }
+        public String getCategory() { return category; }
+        public String getDescription() { return description; }
+        public double getMatchScore() { return matchScore; }
+        public double getImpactRating() { return impactRating; }
+        public int getTrustScore() { return trustScore; }
+    }
+
+    public static class CharityRecommendationResponse {
+        private java.util.List<CharityRecommendation> charities;
+
+        public CharityRecommendationResponse(java.util.List<CharityRecommendation> charities) {
+            this.charities = charities;
+        }
+
+        public java.util.List<CharityRecommendation> getCharities() { return charities; }
     }
 }
