@@ -3,6 +3,7 @@ module com.example.demo1 {
     requires javafx.fxml;
     requires com.google.gson;
     requires java.net.http;
+    requires java.sql;
 
 
     opens com.example.demo1 to javafx.fxml, com.google.gson;
