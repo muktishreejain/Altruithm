@@ -7,9 +7,9 @@ import java.sql.SQLException;
 public final class Database {
 
     // TODO: Set these via environment variables or a config file for production
-    private static final String URL = System.getenv().getOrDefault("ALTRUITHM_DB_URL", "jdbc:mysql://localhost:3306/altruithm?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC");
+    private static final String URL = System.getenv().getOrDefault("ALTRUITHM_DB_URL", "jdbc:mysql://localhost:3306/altruithm_db");
     private static final String USER = System.getenv().getOrDefault("ALTRUITHM_DB_USER", "root");
-    private static final String PASSWORD = System.getenv().getOrDefault("ALTRUITHM_DB_PASSWORD", "");
+    private static final String PASSWORD = System.getenv().getOrDefault("ALTRUITHM_DB_PASSWORD", "DarkSorcerer@014");
 
     private Database() {}
 
