@@ -14,5 +14,7 @@ df2_subset = df3_nonProfits[["CITY","ZIP","STATUS","NAME","impact_score","impact
 df13_merged = pd.merge(df1_charityData,df3_nonProfits, on ="NAME", how = "inner")
 df13_merged_cleaned_financial = df1_subset.merge(df2_subset,on = "NAME",how = "inner")
 
+
+
 print(df13_merged_cleaned_financial.head())
 df13_merged_cleaned_financial.to_csv("CharityData_NonProfit_cleaned.csv",index = False)

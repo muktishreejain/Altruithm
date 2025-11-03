@@ -10,6 +10,7 @@ import argparse
 import json
 import sys
 from typing import List, Dict
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -17,7 +18,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 # -------------------- Load & Prepare --------------------
-CSV_PATH = "charity.csv"
+# Resolve CSV relative to this file so it works regardless of CWD
+CSV_PATH = str((Path(__file__).parent / "CharityData_NonProfit_cleaned_FINAL.csv").resolve())
 
 def load_data(path: str = CSV_PATH) -> pd.DataFrame:
     df = pd.read_csv(path, dtype=str).fillna("")
