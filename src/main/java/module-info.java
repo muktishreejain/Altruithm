@@ -7,5 +7,7 @@ module com.example.demo1 {
 
 
     opens com.example.demo1 to javafx.fxml, com.google.gson;
+    opens com.example.demo1.model to javafx.base;
+    opens com.example.demo1.controller to javafx.fxml, com.google.gson;
     exports com.example.demo1;
 }
