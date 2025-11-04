@@ -1,5 +1,4 @@
     package com.example.demo1;
-    
     import javafx.animation.KeyFrame;
     import javafx.animation.Timeline;
     import javafx.application.Application;
@@ -23,86 +22,104 @@
     import javafx.scene.text.FontWeight;
     import javafx.stage.Stage;
     import javafx.util.Duration;
-    
+    import javafx.scene.web.WebView;
+    import javafx.scene.web.WebEngine;
+    import javafx.concurrent.Worker;
+    import javafx.scene.layout.Region;
+    import javafx.scene.layout.Priority;
+
+
+
+
     public class AltruithmDashboard extends Application {
-    
+
         private TableView<FundingProject> projectTable;
         private LineChart<String, Number> impactTrendChart;
         private PieChart fundingDistributionChart;
         private BarChart<String, Number> regionalImpactChart;
         private StackPane contentArea;
         private Stage primaryStage;
-    
+
         @Override
+        // Add these lines in the start() method after creating the scene:
+
+
         public void start(Stage primaryStage) {
             this.primaryStage = primaryStage;
             primaryStage.setTitle("Altruithm - Global Trust Infrastructure for Social Impact");
-    
+
             BorderPane mainLayout = new BorderPane();
             mainLayout.getStyleClass().add("main-layout");
-    
+
             VBox sidebar = createVerticalSidebar();
             mainLayout.setLeft(sidebar);
-    
+
             contentArea = new StackPane();
             contentArea.getStyleClass().add("content-area");
-    
+
             showOverviewContent();
             mainLayout.setCenter(contentArea);
-    
+
             HBox statusBar = createStatusBar();
             mainLayout.setBottom(statusBar);
-    
+
             Scene scene = new Scene(mainLayout, 1400, 900);
             scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
-    
+
             primaryStage.setScene(scene);
+
+            // ADD THESE LINES TO ENABLE FULLSCREEN:
+            primaryStage.setFullScreen(true);
+            primaryStage.setFullScreenExitHint("Press ESC to exit fullscreen");
+            // Optional: Disable the ESC key exit if you want to keep it locked in fullscreen
+            // primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+
             primaryStage.show();
-    
+
             startAnimations();
         }
-    
+
         private VBox createVerticalSidebar() {
             VBox sidebar = new VBox();
             sidebar.getStyleClass().add("vertical-sidebar");
             sidebar.setPrefWidth(280);
             sidebar.setMinWidth(280);
             sidebar.setMaxWidth(280);
-    
+
             VBox brandSection = new VBox(8);
             brandSection.getStyleClass().add("brand-section");
             brandSection.setAlignment(Pos.CENTER);
             brandSection.setPadding(new Insets(30, 20, 30, 20));
-    
+
             Label logoIcon = new Label("◈");
             logoIcon.getStyleClass().add("logo-icon");
             logoIcon.setFont(Font.font("Arial", FontWeight.BOLD, 42));
-    
+
             Label brandLabel = new Label("ALTRUITHM");
             brandLabel.getStyleClass().add("brand-label");
             brandLabel.setFont(Font.font("Arial", FontWeight.BOLD, 22));
-    
+
             Label brandSubtitle = new Label("Trust Infrastructure");
             brandSubtitle.getStyleClass().add("brand-subtitle");
             brandSubtitle.setFont(Font.font("Arial", FontWeight.NORMAL, 12));
-    
+
             brandSection.getChildren().addAll(logoIcon, brandLabel, brandSubtitle);
-    
+
             VBox metricsSection = createSidebarMetrics();
-    
+
             VBox navSection = new VBox(8);
             navSection.getStyleClass().add("nav-section");
             navSection.setPadding(new Insets(20, 15, 20, 15));
-    
+
             Label navTitle = new Label("NAVIGATION");
             navTitle.getStyleClass().add("nav-title");
             navTitle.setFont(Font.font("Arial", FontWeight.BOLD, 11));
-    
+
             Button overviewBtn = createNavButton("", "Global Overview", true);
             Button projectsBtn = createNavButton("", "Project Monitoring", false);
             Button fraudBtn = createNavButton("", "Fraud Detection", false);
             Button recommenderBtn = createNavButton("", "Charity Recommender", false);
-    
+
             overviewBtn.setOnAction(e -> {
                 setActiveButton(overviewBtn, projectsBtn, fraudBtn, recommenderBtn);
                 showOverviewContent();
@@ -119,161 +136,158 @@
                 setActiveButton(recommenderBtn, overviewBtn, projectsBtn, fraudBtn);
                 showCharityRecommenderContent();
             });
-    
+
             navSection.getChildren().addAll(navTitle, overviewBtn, projectsBtn, fraudBtn, recommenderBtn);
-    
+
             Region spacer = new Region();
             VBox.setVgrow(spacer, Priority.ALWAYS);
-    
+
             VBox systemInfo = createSystemInfo();
-    
+
             sidebar.getChildren().addAll(brandSection, metricsSection, navSection, spacer, systemInfo);
             return sidebar;
         }
-    
+
         private VBox createSidebarMetrics() {
             VBox metricsSection = new VBox(10);
             metricsSection.getStyleClass().add("sidebar-metrics");
             metricsSection.setPadding(new Insets(15, 15, 20, 15));
-    
+
             Label metricsTitle = new Label("KEY METRICS");
             metricsTitle.getStyleClass().add("nav-title");
             metricsTitle.setFont(Font.font("Arial", FontWeight.BOLD, 11));
-    
+
             VBox metric1 = createCompactMetric("₹70,322 Cr", "Total Funding", "metric-green");
             VBox metric2 = createCompactMetric("94.7%", "Impact Rate", "metric-red");
             VBox metric3 = createCompactMetric("₹8,783 Cr", "Fraud Prevented", "metric-orange");
             VBox metric4 = createCompactMetric("2,811", "Active Projects", "metric-purple");
-    
+
             metricsSection.getChildren().addAll(metricsTitle, metric1, metric2, metric3, metric4);
             return metricsSection;
         }
-    
+
         private VBox createCompactMetric(String value, String label, String colorClass) {
             VBox metric = new VBox(3);
             metric.getStyleClass().add("compact-metric");
             metric.setPadding(new Insets(10, 12, 10, 12));
-    
+
             Label valueLabel = new Label(value);
             valueLabel.getStyleClass().addAll("compact-value", colorClass);
             valueLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-    
+
             Label labelLabel = new Label(label);
             labelLabel.getStyleClass().add("compact-label");
             labelLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 11));
-    
+
             metric.getChildren().addAll(valueLabel, labelLabel);
             return metric;
         }
-    
+
         private Button createNavButton(String icon, String text, boolean active) {
             Button button = new Button();
             button.getStyleClass().add("nav-button");
             if (active) {
                 button.getStyleClass().add("nav-button-active");
             }
-    
+
             HBox content = new HBox(12);
             content.setAlignment(Pos.CENTER_LEFT);
-    
+
             Label iconLabel = new Label(icon);
             iconLabel.getStyleClass().add("nav-icon");
             iconLabel.setFont(Font.font(18));
-    
+
             Label textLabel = new Label(text);
             textLabel.getStyleClass().add("nav-text");
             textLabel.setFont(Font.font("Arial", FontWeight.MEDIUM, 14));
-    
+
             content.getChildren().addAll(iconLabel, textLabel);
             button.setGraphic(content);
             button.setMaxWidth(Double.MAX_VALUE);
-    
+
             return button;
         }
-    
+
         private void setActiveButton(Button active, Button... others) {
             active.getStyleClass().add("nav-button-active");
             for (Button btn : others) {
                 btn.getStyleClass().remove("nav-button-active");
             }
         }
-    
+
         private VBox createSystemInfo() {
             VBox systemInfo = new VBox(8);
             systemInfo.getStyleClass().add("system-info");
             systemInfo.setPadding(new Insets(15));
             systemInfo.setAlignment(Pos.CENTER);
-    
+
             Label statusDot = new Label("●");
             statusDot.getStyleClass().addAll("status-dot", "pulse-animation");
             statusDot.setFont(Font.font(12));
-    
+
             Label statusText = new Label("All Systems Operational");
             statusText.getStyleClass().add("status-info-text");
             statusText.setFont(Font.font("Arial", FontWeight.NORMAL, 11));
-    
+
             Button settingsBtn = new Button("⚙");
             settingsBtn.getStyleClass().add("icon-button");
             settingsBtn.setFont(Font.font(18));
-    
+
             Button exitBtn = new Button("⎋");
             exitBtn.getStyleClass().add("icon-button");
             exitBtn.setFont(Font.font(18));
             exitBtn.setOnAction(e -> Platform.exit());
-    
+
             HBox buttonRow = new HBox(10);
             buttonRow.setAlignment(Pos.CENTER);
             buttonRow.getChildren().addAll(settingsBtn, exitBtn);
-    
+
             systemInfo.getChildren().addAll(statusDot, statusText, buttonRow);
             return systemInfo;
         }
-    
+
         private void showOverviewContent() {
             ScrollPane content = createOverviewContent();
             contentArea.getChildren().clear();
             contentArea.getChildren().add(content);
         }
-    
+
         private void showProjectsContent() {
             ScrollPane content = createProjectsContent();
             contentArea.getChildren().clear();
             contentArea.getChildren().add(content);
         }
-    
+
         private void showFraudDetectionContent() {
             ScrollPane content = createFraudDetectionContent();
             contentArea.getChildren().clear();
             contentArea.getChildren().add(content);
         }
-    
+
         private void showCharityRecommenderContent() {
             ScrollPane content = createCharityRecommenderContent();
             contentArea.getChildren().clear();
             contentArea.getChildren().add(content);
         }
-    
+
         private ScrollPane createOverviewContent() {
             VBox content = new VBox(25);
             content.setPadding(new Insets(30));
             content.getStyleClass().add("tab-content");
-    
+
             VBox header = createContentHeader("🌍 Global Overview", "Real-time monitoring of global funding distribution");
-    
+
             VBox mapSection = createMapSection();
-    
+
             HBox chartsRow = new HBox(20);
             chartsRow.setAlignment(Pos.CENTER);
-    
+
             fundingDistributionChart = createEnhancedPieChart();
             VBox pieChartContainer = createChartContainer("Funding by Category", fundingDistributionChart);
-    
-            regionalImpactChart = createEnhancedBarChart();
-            VBox barChartContainer = createChartContainer("Impact by Region", regionalImpactChart);
-    
-            chartsRow.getChildren().addAll(pieChartContainer, barChartContainer);
+
+            chartsRow.getChildren().addAll(pieChartContainer);
             content.getChildren().addAll(header, mapSection, chartsRow);
-    
+
             ScrollPane scrollPane = new ScrollPane(content);
             scrollPane.getStyleClass().add("scroll-pane");
             scrollPane.setFitToWidth(true);
@@ -295,40 +309,109 @@
             header.getChildren().addAll(titleLabel, subtitleLabel);
             return header;
         }
-    
+
         private VBox createMapSection() {
             VBox mapSection = new VBox(12);
             mapSection.getStyleClass().add("card-container");
-    
-            StackPane mapContainer = new StackPane();
-            mapContainer.getStyleClass().add("map-container");
-            mapContainer.setPrefHeight(350);
-    
-            Rectangle mapBackground = new Rectangle(800, 330);
-            mapBackground.getStyleClass().add("map-background");
-    
-            VBox mapContent = new VBox(8);
-            mapContent.setAlignment(Pos.CENTER);
-    
-            Label mapIcon = new Label("🗺️");
-            mapIcon.setFont(Font.font(56));
-            mapIcon.getStyleClass().add("floating-animation");
-    
-            Label mapLabel = new Label("Interactive World Map");
-            mapLabel.getStyleClass().add("map-title");
-            mapLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-    
-            Label mapSubLabel = new Label("Real-time funding flows by region");
-            mapSubLabel.getStyleClass().add("map-subtitle");
-            mapSubLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
-    
-            mapContent.getChildren().addAll(mapIcon, mapLabel, mapSubLabel);
-            mapContainer.getChildren().addAll(mapBackground, mapContent);
-            mapSection.getChildren().add(mapContainer);
-    
+
+            // Create WebView
+            WebView webView = new WebView();
+            WebEngine webEngine = webView.getEngine();
+            webView.setPrefHeight(400);
+            webView.setPrefWidth(800);
+
+            // CRITICAL: Enable JavaScript
+            webEngine.setJavaScriptEnabled(true);
+
+            // Add error handling
+            webEngine.getLoadWorker().exceptionProperty().addListener((obs, oldExc, newExc) -> {
+                if (newExc != null) {
+                    System.err.println("WebEngine error: " + newExc.getMessage());
+                    newExc.printStackTrace();
+                }
+            });
+
+            // Monitor loading state
+            webEngine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
+                System.out.println("WebView state: " + newState);
+                if (newState == javafx.concurrent.Worker.State.SUCCEEDED) {
+                    System.out.println("Map loaded successfully!");
+                } else if (newState == javafx.concurrent.Worker.State.FAILED) {
+                    System.out.println("Map failed to load!");
+                }
+            });
+
+            // Simplified HTML with embedded map
+            String mapHTML = """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+            <style>
+                * { margin: 0; padding: 0; }
+                html, body { height: 100%; width: 100%; }
+                #map { height: 100%; width: 100%; }
+            </style>
+        </head>
+        <body>
+            <div id="map"></div>
+            <script>
+                try {
+                    console.log('Initializing map...');
+                    
+                    var map = L.map('map', {
+                        preferCanvas: true,
+                        tap: false,
+                        dragging: true,
+                        touchZoom: true,
+                        scrollWheelZoom: true
+                    }).setView([20.5937, 78.9629], 5);
+                    
+                    console.log('Adding tile layer...');
+                    
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        maxZoom: 19,
+                        attribution: '© OpenStreetMap'
+                    }).addTo(map);
+                    
+                    console.log('Adding markers...');
+                    
+                    L.marker([28.6139, 77.2090]).addTo(map)
+                        .bindPopup('<b>Clean Water Initiative</b><br>₹2.5 Cr');
+                    L.marker([19.0760, 72.8777]).addTo(map)
+                        .bindPopup('<b>Solar Schools</b><br>₹1.8 Cr');
+                    L.marker([13.0827, 80.2707]).addTo(map)
+                        .bindPopup('<b>Maternal Health</b><br>₹3.8 Cr');
+                    L.marker([22.5726, 88.3639]).addTo(map)
+                        .bindPopup('<b>Digital Literacy</b><br>₹2.2 Cr');
+                    
+                    setTimeout(function() {
+                        map.invalidateSize();
+                        console.log('Map ready!');
+                    }, 250);
+                    
+                } catch(e) {
+                    console.error('Map error: ' + e);
+                    document.body.innerHTML = '<h2 style="color:red;padding:20px;">Error loading map: ' + e.message + '</h2>';
+                }
+            </script>
+        </body>
+        </html>
+        """;
+
+            webEngine.loadContent(mapHTML, "text/html");
+
+            mapSection.getChildren().add(webView);
             return mapSection;
         }
-    
+
+
+
+
+
+
         private ScrollPane createProjectsContent() {
             VBox content = new VBox(25);
             content.setPadding(new Insets(30));
@@ -346,7 +429,7 @@
             scrollPane.setFitToWidth(true);
             return scrollPane;
         }
-    
+
         private HBox createFilterRow() {
             HBox filterRow = new HBox(15);
             filterRow.getStyleClass().add("filter-container");
