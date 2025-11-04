@@ -1,13 +1,10 @@
 from flask import Flask, request, jsonify
-
 import sys
-
+import io
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 import os
-
 import pandas as pd
-
 from sklearn.feature_extraction.text import TfidfVectorizer
-
 from sklearn.metrics.pairwise import cosine_similarity
 
 

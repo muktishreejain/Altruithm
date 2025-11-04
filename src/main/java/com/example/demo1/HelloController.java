@@ -37,7 +37,7 @@ public class HelloController {
     private List<String> getRecommendations(String mode, String input) {
         List<String> results = new ArrayList<>();
         try {
-            ProcessBuilder pb = new ProcessBuilder("python", "charity_recommender_model.py", mode, input);
+            ProcessBuilder pb = new ProcessBuilder("python", "charity_recommender.py", mode, input);
             pb.redirectErrorStream(true);
             Process process = pb.start();
 

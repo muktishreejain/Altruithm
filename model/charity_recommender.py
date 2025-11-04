@@ -1,6 +1,8 @@
 # charity_recommender.py
 import sys
 import os
+import io
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -57,7 +59,11 @@ if __name__ == "__main__":
             results = []
 
         for r in results:
-            print(f"{r['name']}|{r['category']}|{r['description'][:120]}...", flush=True)
+            safe_name = str(r['name']).encode('utf-8', 'ignore').decode('utf-8')
+            safe_cat = str(r['category']).encode('utf-8', 'ignore').decode('utf-8')
+            safe_desc = str(r['description']).encode('utf-8', 'ignore').decode('utf-8')
+            print(f"{safe_name}|{safe_cat}|{safe_desc[:120]}...", flush=True)
+
     except Exception as e:
         print(f"Error: {e}", flush=True)
         sys.exit(1)
