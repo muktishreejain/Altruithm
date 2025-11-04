@@ -3,6 +3,7 @@ package com.example.demo1;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class HelloController {
@@ -37,6 +38,7 @@ public class HelloController {
     private List<String> getRecommendations(String mode, String input) {
         List<String> results = new ArrayList<>();
         try {
+            String userInput = "";
             ProcessBuilder pb = new ProcessBuilder("python", "model/api_server.py", "interest", userInput);
             pb.redirectErrorStream(true);
             Process process = pb.start();
