@@ -6,7 +6,9 @@ module com.example.demo1 {
     requires java.sql;   
 
     
-    requires com.google.gson; 
+    requires com.google.gson;
+    requires java.net.http;
+    requires android.json;
     opens com.example.demo1 to javafx.fxml, com.google.gson;
     exports com.example.demo1;
 }

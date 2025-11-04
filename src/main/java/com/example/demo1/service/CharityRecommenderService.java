@@ -2,6 +2,7 @@ package com.example.demo1.service;
 
 import com.example.demo1.model.Charity;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -18,7 +19,7 @@ public class CharityRecommenderService {
 
     private final HttpClient client = HttpClient.newHttpClient();
 
-    public List<Charity> getCharitiesByInterests(String interests) throws IOException, InterruptedException {
+    public List<Charity> getCharitiesByInterests(String interests) throws IOException, InterruptedException, JSONException {
         String url = BASE_URL + "/recommend_interest?interest=" + encode(interests);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
@@ -29,7 +30,7 @@ public class CharityRecommenderService {
         return parseCharityList(response.body());
     }
 
-    public List<ScoredCharity> getSimilarCharities(String charityName, int topN) throws IOException, InterruptedException {
+    public List<ScoredCharity> getSimilarCharities(String charityName, int topN) throws IOException, InterruptedException, JSONException {
         String url = BASE_URL + "/recommend_similar?charity_name=" + encode(charityName) + "&top_n=" + topN;
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
@@ -45,7 +46,7 @@ public class CharityRecommenderService {
         return scoredList;
     }
 
-    private List<Charity> parseCharityList(String json) {
+    private List<Charity> parseCharityList(String json) throws JSONException {
         JSONArray arr = new JSONArray(json);
         List<Charity> charities = new ArrayList<>();
         for (int i = 0; i < arr.length(); i++) {
