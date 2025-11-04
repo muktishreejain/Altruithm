@@ -10,7 +10,7 @@ import java.time.Duration;
 
 public class AltruithmApiService {
 
-    private static final String BASE_URL = "http://10.3.250.187:8081/api";
+    private static final String BASE_URL = "http://10.3.250.187:8080/api";
     private final HttpClient httpClient;
     private final Gson gson;
 
@@ -70,7 +70,7 @@ public class AltruithmApiService {
         System.out.println("Sending Similar Charities Request: " + jsonBody);
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8081/api/get_similar_charities?name=" + charityName))
+                .uri(URI.create("http://localhost:8080/api/get_similar_charities?name=" + charityName))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                 .timeout(Duration.ofSeconds(15))
@@ -95,7 +95,7 @@ public class AltruithmApiService {
         System.out.println("Sending Charities By Interests Request: " + jsonBody);
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8081/api/get_charities_by_interests?interests=" + interests))
+                .uri(URI.create("http://localhost:8080/api/get_charities_by_interests?interests=" + interests))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                 .timeout(Duration.ofSeconds(15))
@@ -115,6 +115,7 @@ public class AltruithmApiService {
 
     // Request classes
     static class SimilarCharitiesRequest {
+
         private String charityName;
 
         public SimilarCharitiesRequest(String charityName) {
@@ -127,6 +128,7 @@ public class AltruithmApiService {
     }
 
     static class CharitiesByInterestsRequest {
+
         private String interests;
 
         public CharitiesByInterestsRequest(String interests) {
