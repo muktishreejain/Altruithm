@@ -570,8 +570,8 @@
 					riskLevelLabel.setTextFill(Color.web("#00ff88"));
 				}
 				riskLevelLabel.setText("Risk Level: " + riskLevel);
-				riskScoreLabel.setText("Risk Score: -" + riskS + "On a Scale of 10");
-				recommendationLabel.setText("Recommendation: (demo mode)");
+				riskScoreLabel.setText("Risk Score: " + riskS + " on a Scale of 10");
+				recommendationLabel.setText("Recommendation: This is a Basic Model Based on MCDM Decision Making Follow at your own risk");
 				warningsArea.setText("");
 				loadingIndicator.setVisible(false);
 				checkButton.setDisable(false);
