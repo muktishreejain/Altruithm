@@ -37,18 +37,18 @@ public class HelloController {
     private List<String> getRecommendations(String mode, String input) {
         List<String> results = new ArrayList<>();
         try {
-            ProcessBuilder pb = new ProcessBuilder("python", "model/api_server.py", "interest", userInput);
-            pb.redirectErrorStream(true);
-            Process process = pb.start();
+            //ProcessBuilder pb = new ProcessBuilder("python", "model/api_server.py", "interest", userInput);
+           // pb.redirectErrorStream(true);
+           // Process process = pb.start();
             
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
+            //BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
             String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
-            }
+            //while ((line = reader.readLine()) != null) {
+            //    System.out.println(line);
+            //}
 
 
-            process.waitFor();
+             //process.waitFor();
         } catch (Exception e) {
             results.add("Error: " + e.getMessage());
         }

@@ -5,7 +5,6 @@
     import javafx.application.Platform;
     import javafx.collections.FXCollections;
     import javafx.collections.ObservableList;
-    import javafx.concurrent.Task;
     import javafx.geometry.Insets;
     import javafx.geometry.Pos;
     import javafx.scene.Node;
@@ -554,7 +553,6 @@
                 loadingIndicator.setVisible(true);
                 checkButton.setDisable(true);
     
-				// Disconnect API/model: simple rule-based risk for demo
 				resultsBox.setVisible(true);
 				String riskLevel;
                 int riskS=0;
@@ -716,57 +714,70 @@
                 loadingIndicator.setVisible(true);
                 recommendButton.setDisable(true);
 
-                Task<CharityRecommendationResponse> recommendTask = new Task<CharityRecommendationResponse>() {
-                    @Override
-                    protected CharityRecommendationResponse call() throws Exception {
-                        com.example.demo1.service.CharityRecommenderService service = new com.example.demo1.service.CharityRecommenderService();
-                        if (isCharityMode) {
-                            java.util.List<com.example.demo1.service.CharityRecommenderService.ScoredCharity> scored = service.getSimilarCharities(input, 10);
-                            java.util.List<CharityRecommendation> items = new java.util.ArrayList<>();
-                            for (com.example.demo1.service.CharityRecommenderService.ScoredCharity sc : scored) {
-                                com.example.demo1.model.Charity c = sc.charity();
-                                items.add(new CharityRecommendation(
-                                        c.getName(), c.getCategory(), c.getDescription(),
-                                        sc.score() * 100.0, 0.0, 0
-                                ));
-                            }
-                            return new CharityRecommendationResponse(items);
-                        } else {
-                            java.util.List<com.example.demo1.model.Charity> matches = service.getCharitiesByInterests(input);
-                            java.util.List<CharityRecommendation> items = new java.util.ArrayList<>();
-                            for (com.example.demo1.model.Charity c : matches) {
-                                items.add(new CharityRecommendation(c.getName(), c.getCategory(), c.getDescription(), 0.0, 0.0, 0));
-                            }
-                            return new CharityRecommendationResponse(items);
-                        }
-                    }
-                };
-
-                recommendTask.setOnSucceeded(event -> {
-                    CharityRecommendationResponse response = recommendTask.getValue();
-                    charitiesList.getChildren().clear();
-
-                    if (response.getCharities() != null && !response.getCharities().isEmpty()) {
-                        for (CharityRecommendation charity : response.getCharities()) {
-                            VBox charityCard = createCharityCard(charity);
-                            charitiesList.getChildren().add(charityCard);
-                        }
-                        resultsContainer.setVisible(true);
+                // Disconnect API/ML: simple if-else logic with predefined lists
+                java.util.List<CharityRecommendation> items = new java.util.ArrayList<>();
+                
+                if (isCharityMode) {
+                    // Similar charity mode: check charity name
+                    if (input.equalsIgnoreCase("Oxfam")) {
+                        items.add(new CharityRecommendation("Doctors Without Borders", "Healthcare", "Medical humanitarian organization providing emergency aid", 85.0, 4.5, 92));
+                        items.add(new CharityRecommendation("Save the Children", "Children", "Protecting children's rights and welfare worldwide", 80.0, 4.3, 88));
+                        items.add(new CharityRecommendation("World Food Programme", "Hunger Relief", "Fighting global hunger and malnutrition", 75.0, 4.7, 90));
+                    } else if (input.equalsIgnoreCase("Doctors Without Borders")) {
+                        items.add(new CharityRecommendation("Red Cross", "Emergency Relief", "Humanitarian aid and disaster response", 90.0, 4.8, 95));
+                        items.add(new CharityRecommendation("UNICEF", "Children", "United Nations agency for children's welfare", 82.0, 4.6, 93));
+                        items.add(new CharityRecommendation("World Health Organization", "Healthcare", "Global health leadership and coordination", 88.0, 4.9, 94));
+                    } else if (input.equalsIgnoreCase("WWF") || input.equalsIgnoreCase("World Wildlife Fund")) {
+                        items.add(new CharityRecommendation("Greenpeace", "Environment", "Environmental activism and conservation", 92.0, 4.4, 87));
+                        items.add(new CharityRecommendation("Sierra Club", "Environment", "Environmental protection and advocacy", 85.0, 4.2, 85));
+                        items.add(new CharityRecommendation("Nature Conservancy", "Environment", "Land and water conservation", 78.0, 4.5, 89));
                     } else {
-                        showAlert("No Results", "No charities found. Please try different search terms.");
+                        // Default list for other charity names
+                        items.add(new CharityRecommendation("United Way", "Community", "Community impact and social services", 70.0, 4.0, 82));
+                        items.add(new CharityRecommendation("Salvation Army", "Community", "Social services and disaster relief", 65.0, 3.8, 80));
                     }
+                } else {
+                    // Interest mode: check interest keywords
+                    String interestLower = input.toLowerCase();
+                    if (interestLower.contains("education") || interestLower.contains("school") || interestLower.contains("learning")) {
+                        items.add(new CharityRecommendation("UNICEF Education Fund", "Education", "Improving access to quality education for children globally", 95.0, 4.8, 94));
+                        items.add(new CharityRecommendation("Room to Read", "Education", "Literacy and gender equality in education", 90.0, 4.6, 91));
+                        items.add(new CharityRecommendation("Teach for All", "Education", "Ensuring educational equity worldwide", 85.0, 4.4, 88));
+                    } else if (interestLower.contains("health") || interestLower.contains("medical") || interestLower.contains("healthcare")) {
+                        items.add(new CharityRecommendation("Doctors Without Borders", "Healthcare", "Medical humanitarian aid in crisis zones", 95.0, 4.9, 96));
+                        items.add(new CharityRecommendation("Red Cross", "Emergency Relief", "Medical assistance and disaster response", 90.0, 4.7, 94));
+                        items.add(new CharityRecommendation("World Health Organization", "Healthcare", "Global health initiatives and research", 88.0, 4.8, 95));
+                    } else if (interestLower.contains("environment") || interestLower.contains("climate") || interestLower.contains("nature")) {
+                        items.add(new CharityRecommendation("World Wildlife Fund (WWF)", "Environment", "Wildlife conservation and habitat protection", 95.0, 4.5, 89));
+                        items.add(new CharityRecommendation("Greenpeace", "Environment", "Environmental activism and climate action", 92.0, 4.3, 87));
+                        items.add(new CharityRecommendation("Sierra Club", "Environment", "Protecting natural landscapes and wildlife", 88.0, 4.4, 86));
+                    } else if (interestLower.contains("hunger") || interestLower.contains("food") || interestLower.contains("nutrition")) {
+                        items.add(new CharityRecommendation("World Food Programme", "Hunger Relief", "Fighting global hunger and food insecurity", 95.0, 4.8, 93));
+                        items.add(new CharityRecommendation("Feeding America", "Hunger Relief", "Food bank network and hunger relief", 90.0, 4.6, 90));
+                        items.add(new CharityRecommendation("Action Against Hunger", "Hunger Relief", "Preventing and treating malnutrition", 88.0, 4.7, 91));
+                    } else {
+                        // Default list for other interests
+                        items.add(new CharityRecommendation("United Way", "Community", "Local community support and development", 70.0, 4.0, 82));
+                        items.add(new CharityRecommendation("Salvation Army", "Community", "Social services and emergency assistance", 65.0, 3.8, 80));
+                    }
+                }
 
-                    loadingIndicator.setVisible(false);
-                    recommendButton.setDisable(false);
-                });
+                // Update UI with results
+                charitiesList.getChildren().clear();
+                
+                if (!items.isEmpty()) {
+                    for (CharityRecommendation charity : items) {
+                        VBox charityCard = createCharityCard(charity);
+                        charitiesList.getChildren().add(charityCard);
+                    }
+                    resultsContainer.setVisible(true);
+                } else {
+                    showAlert("No Results", "No charities found. Please try different search terms.");
+                    resultsContainer.setVisible(false);
+                }
 
-                recommendTask.setOnFailed(event -> {
-                    showAlert("Error", "Failed to get recommendations: " + recommendTask.getException().getMessage());
-                    loadingIndicator.setVisible(false);
-                    recommendButton.setDisable(false);
-                });
-
-                new Thread(recommendTask).start();
+                loadingIndicator.setVisible(false);
+                recommendButton.setDisable(false);
             });
     
             charityForm.getChildren().addAll(charityFormTitle, charityLabel, charityNameField);
