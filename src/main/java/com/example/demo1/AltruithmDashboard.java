@@ -728,31 +728,45 @@
             recommendButton.setOnAction(e -> {
                 boolean isCharityMode = charityModeBtn.isSelected();
                 String input = isCharityMode ? charityNameField.getText().trim() : interestsField.getText().trim();
-    
+
                 if (input.isEmpty()) {
                     showAlert("Error", "Please enter " + (isCharityMode ? "a charity name" : "your interests"));
                     return;
                 }
-    
+
                 loadingIndicator.setVisible(true);
                 recommendButton.setDisable(true);
-    
+
                 Task<CharityRecommendationResponse> recommendTask = new Task<CharityRecommendationResponse>() {
                     @Override
                     protected CharityRecommendationResponse call() throws Exception {
-                        AltruithmApiService apiService = new AltruithmApiService();
+                        com.example.demo1.service.CharityRecommenderService service = new com.example.demo1.service.CharityRecommenderService();
                         if (isCharityMode) {
-                            return apiService.getSimilarCharities(input);
+                            java.util.List<com.example.demo1.service.CharityRecommenderService.ScoredCharity> scored = service.getSimilarCharities(input, 10);
+                            java.util.List<CharityRecommendation> items = new java.util.ArrayList<>();
+                            for (com.example.demo1.service.CharityRecommenderService.ScoredCharity sc : scored) {
+                                com.example.demo1.model.Charity c = sc.charity();
+                                items.add(new CharityRecommendation(
+                                        c.getName(), c.getCategory(), c.getDescription(),
+                                        sc.score() * 100.0, 0.0, 0
+                                ));
+                            }
+                            return new CharityRecommendationResponse(items);
                         } else {
-                            return apiService.getCharitiesByInterests(input);
+                            java.util.List<com.example.demo1.model.Charity> matches = service.getCharitiesByInterests(input);
+                            java.util.List<CharityRecommendation> items = new java.util.ArrayList<>();
+                            for (com.example.demo1.model.Charity c : matches) {
+                                items.add(new CharityRecommendation(c.getName(), c.getCategory(), c.getDescription(), 0.0, 0.0, 0));
+                            }
+                            return new CharityRecommendationResponse(items);
                         }
                     }
                 };
-    
+
                 recommendTask.setOnSucceeded(event -> {
                     CharityRecommendationResponse response = recommendTask.getValue();
                     charitiesList.getChildren().clear();
-    
+
                     if (response.getCharities() != null && !response.getCharities().isEmpty()) {
                         for (CharityRecommendation charity : response.getCharities()) {
                             VBox charityCard = createCharityCard(charity);
@@ -762,17 +776,17 @@
                     } else {
                         showAlert("No Results", "No charities found. Please try different search terms.");
                     }
-    
+
                     loadingIndicator.setVisible(false);
                     recommendButton.setDisable(false);
                 });
-    
+
                 recommendTask.setOnFailed(event -> {
                     showAlert("Error", "Failed to get recommendations: " + recommendTask.getException().getMessage());
                     loadingIndicator.setVisible(false);
                     recommendButton.setDisable(false);
                 });
-    
+
                 new Thread(recommendTask).start();
             });
     

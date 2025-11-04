@@ -1,16 +1,20 @@
 # charity_recommender.py
 import sys
+import os
 import io
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+# --- Fix 1: Use absolute path ---
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_PATH = os.path.join(BASE_DIR, 'CharityData_NonProfit_cleaned_FINAL.csv')
 
 # Load dataset
-df = pd.read_csv('CharityData_NonProfit_cleaned_FINAL.csv')
+df = pd.read_csv(DATA_PATH)
 
-# Combine textual fields 
+# Combine textual fields
 df['combined'] = (
     df['name'].astype(str) + " " +
     df['description'].astype(str) + " " +
@@ -38,17 +42,28 @@ def recommend_by_interest(interest, top_n=5):
     return df.iloc[top_indices][['name', 'description', 'category']].to_dict(orient='records')
 
 # Command-line interface for Java
-# Usage from Java: python charity_recommender.py mode "input text"
 if __name__ == "__main__":
-    mode = sys.argv[1]   # either 'similar' or 'interest'
+    if len(sys.argv) < 3:
+        print("Error: missing arguments", flush=True)
+        sys.exit(1)
+
+    mode = sys.argv[1]
     input_text = sys.argv[2]
 
-    if mode == "similar":
-        results = recommend_similar_charities(input_text)
-    elif mode == "interest":
-        results = recommend_by_interest(input_text)
-    else:
-        results = []
+    try:
+        if mode == "similar":
+            results = recommend_similar_charities(input_text)
+        elif mode == "interest":
+            results = recommend_by_interest(input_text)
+        else:
+            results = []
 
-    for r in results:
-        print(f"{r['name']}|{r['category']}|{r['description'][:120]}...")
+        for r in results:
+            safe_name = str(r['name']).encode('utf-8', 'ignore').decode('utf-8')
+            safe_cat = str(r['category']).encode('utf-8', 'ignore').decode('utf-8')
+            safe_desc = str(r['description']).encode('utf-8', 'ignore').decode('utf-8')
+            print(f"{safe_name}|{safe_cat}|{safe_desc[:120]}...", flush=True)
+
+    except Exception as e:
+        print(f"Error: {e}", flush=True)
+        sys.exit(1)
