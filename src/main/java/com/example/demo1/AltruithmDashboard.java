@@ -554,50 +554,29 @@
                 loadingIndicator.setVisible(true);
                 checkButton.setDisable(true);
     
-                Task<FraudCheckResponse> fraudTask = new Task<>() {
-                    @Override
-                    protected FraudCheckResponse call() throws Exception {
-                        AltruithmApiService apiService = new AltruithmApiService();
-                        return apiService.checkFraud(charityName, amount);
-                    }
-                };
-    
-                fraudTask.setOnSucceeded(event -> {
-                    FraudCheckResponse response = fraudTask.getValue();
-                    resultsBox.setVisible(true);
-    
-                    riskLevelLabel.setText("Risk Level: " + response.getRiskLevel());
-                    switch (response.getRiskLevel()) {
-                        case "LOW": riskLevelLabel.setTextFill(Color.web("#00ff88")); break;
-                        case "MEDIUM": riskLevelLabel.setTextFill(Color.web("#ffaa00")); break;
-                        case "HIGH": riskLevelLabel.setTextFill(Color.web("#ff4444")); break;
-                        default: riskLevelLabel.setTextFill(Color.WHITE); break;
-                    }
-    
-                    riskScoreLabel.setText(String.format("Risk Score: %.2f", response.getRiskScore()));
-                    recommendationLabel.setText("Recommendation: " + response.getRecommendation());
-    
-                    StringBuilder warnings = new StringBuilder();
-                    if (response.getWarnings() != null && !response.getWarnings().isEmpty()) {
-                        for (String warning : response.getWarnings()) {
-                            warnings.append("• ").append(warning).append("\n");
-                        }
-                    } else {
-                        warnings.append("No warnings");
-                    }
-                    warningsArea.setText(warnings.toString());
-    
-                    loadingIndicator.setVisible(false);
-                    checkButton.setDisable(false);
-                });
-    
-                fraudTask.setOnFailed(event -> {
-                    showAlert("Error", "Failed: " + fraudTask.getException().getMessage());
-                    loadingIndicator.setVisible(false);
-                    checkButton.setDisable(false);
-                });
-    
-                new Thread(fraudTask).start();
+				// Disconnect API/model: simple rule-based risk for demo
+				resultsBox.setVisible(true);
+				String riskLevel;
+                int riskS=0;
+				if (charityName.equalsIgnoreCase("Trump Foundation") || amount > 10000) {
+					riskLevel = "HIGH";
+                    riskS=7;
+					riskLevelLabel.setTextFill(Color.web("#ff4444"));
+				} else if (charityName.equalsIgnoreCase("American Red Cross") || amount > 1000) {
+					riskLevel = "MEDIUM";
+                    riskS=5;
+					riskLevelLabel.setTextFill(Color.web("#ffaa00"));
+				} else {
+					riskLevel = "LOW";
+                    riskS=3;
+					riskLevelLabel.setTextFill(Color.web("#00ff88"));
+				}
+				riskLevelLabel.setText("Risk Level: " + riskLevel);
+				riskScoreLabel.setText("Risk Score: -" + riskS + "On a Scale of 10");
+				recommendationLabel.setText("Recommendation: (demo mode)");
+				warningsArea.setText("");
+				loadingIndicator.setVisible(false);
+				checkButton.setDisable(false);
             });
     
             form.getChildren().addAll(
